@@ -1,6 +1,6 @@
 (function(global) {
     'use strict';
-    var urlReg = /\w+:\/\/\w+\/(.+)/;
+    var errMsg = Math.random().toString(32).substr(2);
     var rootModule = {};
     function ModuleCtor(id) {
         if (!this || this.__proto__ !== ModuleCtor.prototype) {
@@ -32,14 +32,18 @@
             loadScript(src, function() {
                 exec();
             });
-            throw new Error('module is not ready');
+            throw new Error(errMsg);
         }
         function exec() {
             try {
                 fn.call(module.exports, module.exports, module, __require__);
                 module.loaded = !0;
                 rootModule[id] = module;
-            } catch (err) {}
+            } catch (err) {
+                if (err.message !== errMsg) {
+                    throw err;
+                }
+            }
         }
     }
 
